@@ -2,14 +2,12 @@
 const express = require('express');
 const cors = require('cors');
 const sql = require('mssql');
-const https = require('https');
-const fs = require('fs');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// SQL bağlantı ayarları (Artık .env'den geliyor)
+// SQL bağlantı ayarları (.env üzerinden geliyor)
 const dbConfig = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -33,16 +31,10 @@ app.get("/api/musteriler", async (req, res) => {
     }
 });
 
-// HTTPS sertifika ayarları
-const options = {
-    pfx: fs.readFileSync("./cert.pfx"),
-    passphrase: process.env.CERTIFICATE_PASSWORD
-};
-
-// PORT seçimi (Render için gerekli)
+// Render'ın verdiği PORT'u kullan
 const PORT = process.env.PORT || 5000;
 
-// HTTPS server başlatılıyor
-https.createServer(options, app).listen(PORT, "0.0.0.0", () => {
-    console.log(`💚 HTTPS Backend ÇALIŞIYOR 👉 https://10.110.110.97:${PORT}`);
+// Sadece HTTP olarak başlat (Render otomatik HTTPS yapar)
+app.listen(PORT, () => {
+    console.log(`🚀 Backend çalışıyor (Render) - PORT: ${PORT}`);
 });
